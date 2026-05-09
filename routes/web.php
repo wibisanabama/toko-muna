@@ -48,4 +48,5 @@ Route::middleware('auth')->group(function () {
 
     // Riwayat Transaksi
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
+    Route::get('/transactions/{id}/print', [TransactionController::class, 'show'])->name('transactions.print');
 });

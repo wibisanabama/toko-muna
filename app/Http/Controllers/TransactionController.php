@@ -23,4 +23,10 @@ class TransactionController extends Controller
 
         return view('transactions.index', compact('transactions'));
     }
+
+    public function show($id)
+    {
+        $transaction = \App\Models\Transaction::with(['items.product', 'user'])->findOrFail($id);
+        return view('transactions.print', compact('transaction'));
+    }
 }

@@ -335,8 +335,14 @@
                     if (response.data.success) {
                         this.cart = []; // clear cart
                         this.modalInstance.hide();
-                        alert(`Transaksi Berhasil!\nKembalian: Rp ${this.formatRupiah(response.data.change)}`);
-                        window.location.reload(); // Reload to refresh stock UI
+                        
+                        // Buka struk di tab baru
+                        window.open('/transactions/' + response.data.transaction_id + '/print', '_blank');
+                        
+                        // Reload untuk merefresh stok di UI utama setelah delay kecil
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 500);
                     }
                 } catch (error) {
                     this.errorMsg = error.response?.data?.message || 'Terjadi kesalahan sistem.';

@@ -50,9 +50,9 @@
                         <td class="fw-bold text-primary">Rp {{ number_format($transaction->total, 0, ',', '.') }}</td>
                         <td><span class="badge bg-light text-dark border">{{ strtoupper($transaction->payment_method) }}</span></td>
                         <td class="text-center pe-4">
-                            <button class="btn btn-sm btn-outline-info">
-                                <i class="bi bi-eye"></i>
-                            </button>
+                            <a href="{{ route('transactions.print', $transaction->id) }}" target="_blank" class="btn btn-sm btn-outline-primary" title="Cetak Struk">
+                                <i class="bi bi-printer"></i>
+                            </a>
                         </td>
                     </tr>
                     @empty
