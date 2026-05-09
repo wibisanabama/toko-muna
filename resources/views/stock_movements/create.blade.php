@@ -11,7 +11,7 @@
                 <h5 class="mb-0"><i class="bi bi-plus-circle me-2"></i>Input Stok Masuk / Keluar</h5>
             </div>
             <div class="card-body">
-                <form action="{{ route('stock_movements.store') }}" method="POST">
+                <form action="{{ route('stock-movements.store') }}" method="POST">
                     @csrf
 
                     <div class="mb-3">
@@ -54,7 +54,7 @@
                         <button type="submit" class="btn btn-primary">
                             <i class="bi bi-check-lg me-1"></i>Simpan Perubahan
                         </button>
-                        <a href="{{ route('stock_movements.index') }}" class="btn btn-outline-secondary">
+                        <a href="{{ route('stock-movements.index') }}" class="btn btn-outline-secondary">
                             Batal
                         </a>
                     </div>

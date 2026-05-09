@@ -51,6 +51,6 @@ class StockMovementController extends Controller
             $product->decrement('stock', $validated['quantity']);
         }
 
-        return redirect()->route('stock_movements.index')->with('success', 'Pergerakan stok berhasil dicatat.');
+        return redirect()->route('stock-movements.index')->with('success', 'Pergerakan stok berhasil dicatat.');
     }
 }

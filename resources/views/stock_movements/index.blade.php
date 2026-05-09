@@ -7,7 +7,7 @@
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0"><i class="bi bi-arrow-left-right me-2"></i>Riwayat Pergerakan Stok</h5>
-        <a href="{{ route('stock_movements.create') }}" class="btn btn-primary btn-sm">
+        <a href="{{ route('stock-movements.create') }}" class="btn btn-primary btn-sm">
             <i class="bi bi-plus-lg me-1"></i>Catat Pergerakan
         </a>
     </div>
