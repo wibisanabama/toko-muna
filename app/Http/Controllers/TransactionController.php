@@ -8,7 +8,8 @@ class TransactionController extends Controller
 {
     public function index(Request $request)
     {
-        $query = \App\Models\Transaction::with('user');
+        // Load items.product as well to use in the view modal
+        $query = \App\Models\Transaction::with(['user', 'items.product']);
 
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
@@ -19,9 +20,25 @@ class TransactionController extends Controller
             $query->where('payment_method', $request->payment_method);
         }
 
+        if ($request->has('user_id') && $request->user_id != '') {
+            $query->where('user_id', $request->user_id);
+        }
+
+        if ($request->has('start_date') && $request->start_date != '') {
+            // Include start of day
+            $query->where('created_at', '>=', $request->start_date . ' 00:00:00');
+        }
+
+        if ($request->has('end_date') && $request->end_date != '') {
+            // Include end of day
+            $query->where('created_at', '<=', $request->end_date . ' 23:59:59');
+        }
+
         $transactions = $query->latest()->paginate(15)->withQueryString();
 
-        return view('transactions.index', compact('transactions'));
+        $users = \App\Models\User::all();
+
+        return view('transactions.index', compact('transactions', 'users'));
     }
 
     public function show($id)
