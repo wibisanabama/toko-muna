@@ -256,11 +256,13 @@
                         <i class="bi bi-bar-chart-line-fill"></i> Laporan
                     </a>
                 </li>
+                @if(auth()->user()->isAdmin())
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}" href="#">
+                    <a class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}" href="{{ route('users.index') }}">
                         <i class="bi bi-people-fill"></i> User
                     </a>
                 </li>
+                @endif
             </ul>
         </nav>
     </aside>
