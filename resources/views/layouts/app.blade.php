@@ -200,6 +200,39 @@
             color: var(--dark);
         }
 
+        /* Loading Bar */
+        .loading-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--secondary), var(--primary));
+            width: 100%;
+            z-index: 9999;
+            animation: loading 2s infinite ease-in-out;
+            display: none;
+        }
+
+        @keyframes loading {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Better Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
         @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-100%);
@@ -218,6 +251,7 @@
     @stack('styles')
 </head>
 <body>
+    <div class="loading-bar" id="loadingBar"></div>
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-brand">
@@ -252,7 +286,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('transactions.*') ? 'active' : '' }}" href="#">
+                    <a class="nav-link {{ request()->routeIs('transactions.*') ? 'active' : '' }}" href="{{ route('transactions.index') }}">
                         <i class="bi bi-receipt-cutoff"></i> Transaksi
                     </a>
                 </li>
@@ -292,14 +326,20 @@
                 @auth
                 <div class="dropdown">
                     <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=6C5CE7&color=fff" alt="User" width="32" height="32" class="rounded-circle me-2">
-                        <strong class="text-dark">{{ auth()->user()->name }}</strong>
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=6C5CE7&color=fff" alt="User" width="32" height="32" class="rounded-circle me-2 border border-2 border-primary-subtle">
+                        <div class="d-none d-lg-block">
+                            <div class="fw-bold text-dark lh-1 small">{{ auth()->user()->name }}</div>
+                            <small class="text-muted" style="font-size: 10px;">{{ strtoupper(auth()->user()->role) }}</small>
+                        </div>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2" aria-labelledby="dropdownUser">
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2 p-2" aria-labelledby="dropdownUser">
+                        <li><a class="dropdown-item rounded-2 py-2" href="#"><i class="bi bi-person me-2"></i>Profil Saya</a></li>
+                        <li><a class="dropdown-item rounded-2 py-2" href="#"><i class="bi bi-gear me-2"></i>Pengaturan</a></li>
+                        <li><hr class="dropdown-divider"></li>
                         <li>
                             <form action="{{ route('logout') }}" method="POST">
                                 @csrf
-                                <button type="submit" class="dropdown-item text-danger"><i class="bi bi-box-arrow-right me-2"></i>Logout</button>
+                                <button type="submit" class="dropdown-item rounded-2 py-2 text-danger"><i class="bi bi-box-arrow-right me-2"></i>Keluar</button>
                             </form>
                         </li>
                     </ul>
