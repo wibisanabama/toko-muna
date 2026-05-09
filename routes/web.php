@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StockMovementController;
+use App\Http\Controllers\TransactionController;
 use App\Models\Product;
 use Illuminate\Support\Facades\Route;
 
@@ -44,4 +45,7 @@ Route::middleware('auth')->group(function () {
     // POS (Kasir)
     Route::get('/pos', [\App\Http\Controllers\PosController::class, 'index'])->name('pos.index');
     Route::post('/pos/checkout', [\App\Http\Controllers\PosController::class, 'checkout'])->name('pos.checkout');
+
+    // Riwayat Transaksi
+    Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
 });
