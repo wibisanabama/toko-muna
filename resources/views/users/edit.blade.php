@@ -1,43 +1,50 @@
 @extends('layouts.app')
-@section('title', 'Edit User')
-@section('page-title', 'Edit User')
+@section('title', 'Ubah Pengguna')
+@section('page-title', 'Ubah Pengguna')
 @section('content')
-<div class="mx-auto max-w-2xl">
-    <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
-        <div class="border-b border-gray-200 px-6 py-4 dark:border-gray-800"><h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Edit: {{ $user->name }}</h3></div>
-        <div class="p-6">
-            <form action="{{ route('users.update', $user) }}" method="POST">
-                @csrf @method('PUT')
-                <div class="space-y-5">
-                    <div>
-                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Nama <span class="text-error-500">*</span></label>
-                        <input type="text" name="name" value="{{ old('name', $user->name) }}" required class="dark:bg-gray-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800">
-                        @error('name')<p class="mt-1 text-sm text-error-500">{{ $message }}</p>@enderror
+<div>
+ <div class="rounded-2xl border border-gray-200 bg-white ">
+ <div class="border-b border-gray-200 px-6 py-4 "><h3 class="text-lg font-semibold text-gray-800 ">Ubah: {{ $user->name }}</h3></div>
+ <div class="p-6">
+ <form action="{{ route('users.update', $user) }}" method="POST">
+ @csrf @method('PUT')
+ <div class="space-y-5">
+ <div>
+ <label class="mb-1.5 block text-sm font-medium text-gray-700 ">Nama <span class="text-error-500">*</span></label>
+ <input type="text" name="name" value="{{ old('name', $user->name) }}" required class=" h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 ">
+ @error('name')<p class="mt-1 text-sm text-error-500">{{ $message }}</p>@enderror
+ </div>
+ <div>
+ <label class="mb-1.5 block text-sm font-medium text-gray-700 ">Email <span class="text-error-500">*</span></label>
+ <input type="email" name="email" value="{{ old('email', $user->email) }}" required class=" h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 ">
+ @error('email')<p class="mt-1 text-sm text-error-500">{{ $message }}</p>@enderror
+ </div>
+ <div>
+ <label class="mb-1.5 block text-sm font-medium text-gray-700 ">Password <span class="text-gray-400 font-normal text-xs">(Kosongkan jika tidak diubah)</span></label>
+ <input type="password" name="password" class=" h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 ">
+ @error('password')<p class="mt-1 text-sm text-error-500">{{ $message }}</p>@enderror
+ </div>
+ <div>
+ <label class="mb-1.5 block text-sm font-medium text-gray-700 ">Role <span class="text-error-500">*</span></label>
+                    <div class="relative" x-data="{ open: false, selected: '{{ old('role', $user->role) === 'admin' ? 'Admin' : 'Kasir' }}' }">
+                        <button type="button" @click="open = !open" class="custom-select-trigger">
+                            <span x-text="selected"></span>
+                            <svg class="fill-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" width="18" height="18" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+                        </button>
+                        <div x-show="open" @click.outside="open = false" x-transition class="custom-select-dropdown">
+                            <div @click="selected = 'Kasir'; open = false; $refs.roleInput.value = 'kasir';" class="custom-select-option" :class="$refs.roleInput.value === 'kasir' ? 'custom-select-option-active' : 'custom-select-option-inactive'">Kasir</div>
+                            <div @click="selected = 'Admin'; open = false; $refs.roleInput.value = 'admin';" class="custom-select-option" :class="$refs.roleInput.value === 'admin' ? 'custom-select-option-active' : 'custom-select-option-inactive'">Admin</div>
+                        </div>
+                        <input type="hidden" name="role" x-ref="roleInput" value="{{ old('role', $user->role) }}">
                     </div>
-                    <div>
-                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Email <span class="text-error-500">*</span></label>
-                        <input type="email" name="email" value="{{ old('email', $user->email) }}" required class="dark:bg-gray-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800">
-                        @error('email')<p class="mt-1 text-sm text-error-500">{{ $message }}</p>@enderror
-                    </div>
-                    <div>
-                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Password <span class="text-gray-400 font-normal text-xs">(Kosongkan jika tidak diubah)</span></label>
-                        <input type="password" name="password" class="dark:bg-gray-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800">
-                        @error('password')<p class="mt-1 text-sm text-error-500">{{ $message }}</p>@enderror
-                    </div>
-                    <div>
-                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Role <span class="text-error-500">*</span></label>
-                        <select name="role" required class="dark:bg-gray-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800">
-                            <option value="kasir" {{ old('role', $user->role) === 'kasir' ? 'selected' : '' }}>Kasir</option>
-                            <option value="admin" {{ old('role', $user->role) === 'admin' ? 'selected' : '' }}>Admin</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="mt-6 flex items-center gap-3">
-                    <button type="submit" class="rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-medium text-white shadow-theme-xs hover:bg-brand-600">Update</button>
-                    <a href="{{ route('users.index') }}" class="rounded-lg border border-gray-300 px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-white/5">Batal</a>
-                </div>
-            </form>
-        </div>
-    </div>
+ </div>
+ </div>
+ <div class="mt-6 flex items-center gap-3">
+ <button type="submit" class="rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-medium text-white shadow-theme-xs hover:bg-brand-600">Simpan Perubahan</button>
+ <a href="{{ route('users.index') }}" class="rounded-lg border border-gray-300 px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 ">Batal</a>
+ </div>
+ </form>
+ </div>
+ </div>
 </div>
 @endsection

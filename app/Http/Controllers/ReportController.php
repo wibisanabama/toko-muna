@@ -9,7 +9,7 @@ class ReportController extends Controller
     public function daily(Request $request)
     {
         $date = $request->get('date', date('Y-m-d'));
-        
+
         $transactions = \App\Models\Transaction::with(['user', 'items.product'])
             ->whereDate('created_at', $date)
             ->latest()
@@ -28,7 +28,7 @@ class ReportController extends Controller
     {
         $month = $request->get('month', date('m'));
         $year = $request->get('year', date('Y'));
-        
+
         $transactions = \App\Models\Transaction::with(['user'])
             ->whereMonth('created_at', $month)
             ->whereYear('created_at', $year)
@@ -40,7 +40,6 @@ class ReportController extends Controller
             'average_transaction' => $transactions->count() > 0 ? $transactions->avg('total') : 0,
         ];
 
-        // Prepare data for chart (daily revenue in the selected month)
         $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $month, $year);
         $chartData = [];
         for ($i = 1; $i <= $daysInMonth; $i++) {

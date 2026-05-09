@@ -8,7 +8,7 @@ layer(base);
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
-@custom-variant dark (&:is(.dark *));
+
 
 @theme {
   --font-*: initial;
@@ -164,19 +164,19 @@ layer(base);
 }
 
 @utility menu-item-active {
-  @apply bg-brand-50 text-brand-500 dark:bg-brand-500/[0.12] dark:text-brand-400;
+  @apply bg-brand-50 text-brand-500;
 }
 
 @utility menu-item-inactive {
-  @apply text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-300 dark:hover:bg-white/5 dark:hover:text-gray-300;
+  @apply text-gray-700 hover:bg-gray-100 hover:text-gray-700;
 }
 
 @utility menu-item-icon-active {
-  @apply fill-brand-500 dark:fill-brand-400;
+  @apply fill-brand-500;
 }
 
 @utility menu-item-icon-inactive {
-  @apply fill-gray-500 group-hover:fill-gray-700 dark:fill-gray-400 dark:group-hover:fill-gray-300;
+  @apply fill-gray-500 group-hover:fill-gray-700;
 }
 
 @utility no-scrollbar {
@@ -199,13 +199,31 @@ layer(base);
   }
 }
 
-.dark .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #344054;
+@utility custom-select-trigger {
+  @apply flex h-11 w-full items-center justify-between rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs transition focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10;
 }
+
+@utility custom-select-dropdown {
+  @apply absolute left-0 top-full z-50 mt-1 w-full rounded-xl border border-gray-200 bg-white p-1 max-h-32 overflow-y-auto no-scrollbar;
+}
+
+@utility custom-select-option {
+  @apply cursor-pointer rounded-lg px-3 py-2.5 text-sm transition hover:bg-gray-50;
+}
+
+@utility custom-select-option-active {
+  @apply bg-brand-50 font-medium text-brand-600;
+}
+
+@utility custom-select-option-inactive {
+  @apply text-gray-700;
+}
+
+
 
 @layer base {
   body {
-    @apply font-outfit relative z-1 bg-gray-50 text-base font-normal text-gray-700 dark:bg-gray-900 dark:text-gray-300;
+    @apply font-outfit relative z-1 bg-gray-50 text-base font-normal text-gray-700;
   }
 }
 

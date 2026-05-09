@@ -13,16 +13,16 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         \App\Models\User::create([
-            'name' => 'Administrator',
-            'email' => 'admin@toko-muna.test',
-            'password' => \Illuminate\Support\Facades\Hash::make('password'),
+            'name' => 'Admin Toko',
+            'email' => 'admin@tokomuna.com',
+            'password' => \Illuminate\Support\Facades\Hash::make('admin123'),
             'role' => 'admin',
         ]);
 
         \App\Models\User::create([
-            'name' => 'Kasir 1',
-            'email' => 'kasir@toko-muna.test',
-            'password' => \Illuminate\Support\Facades\Hash::make('password'),
+            'name' => 'Kasir Toko',
+            'email' => 'kasir@tokomuna.com',
+            'password' => \Illuminate\Support\Facades\Hash::make('kasir123'),
             'role' => 'kasir',
         ]);
     }

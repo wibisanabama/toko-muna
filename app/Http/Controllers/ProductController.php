@@ -23,7 +23,7 @@ class ProductController extends Controller
             $query->where('category_id', $request->category_id);
         }
 
-        $products = $query->latest()->paginate(10)->withQueryString();
+        $products = $query->latest()->get();
         $categories = \App\Models\Category::all();
 
         return view('products.index', compact('products', 'categories'));
@@ -98,11 +98,10 @@ class ProductController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            // Hapus gambar lama jika ada
             if ($product->image && \Illuminate\Support\Facades\Storage::disk('public')->exists($product->image)) {
                 \Illuminate\Support\Facades\Storage::disk('public')->delete($product->image);
             }
-            
+
             $imagePath = $request->file('image')->store('products', 'public');
             $validated['image'] = $imagePath;
         }
@@ -118,7 +117,6 @@ class ProductController extends Controller
      */
     public function destroy(\App\Models\Product $product)
     {
-        // Hapus gambar jika ada
         if ($product->image && \Illuminate\Support\Facades\Storage::disk('public')->exists($product->image)) {
             \Illuminate\Support\Facades\Storage::disk('public')->delete($product->image);
         }

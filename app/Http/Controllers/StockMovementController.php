@@ -10,7 +10,7 @@ class StockMovementController extends Controller
 {
     public function index()
     {
-        $movements = StockMovement::with(['product', 'user'])->latest()->paginate(15);
+        $movements = StockMovement::with(['product', 'user'])->latest()->get();
         return view('stock_movements.index', compact('movements'));
     }
 
@@ -35,7 +35,6 @@ class StockMovementController extends Controller
             return back()->withErrors(['quantity' => 'Stok tidak mencukupi untuk pengeluaran ini. (Stok tersedia: ' . $product->stock . ')'])->withInput();
         }
 
-        // Create the movement
         StockMovement::create([
             'product_id' => $validated['product_id'],
             'type' => $validated['type'],
@@ -44,7 +43,6 @@ class StockMovementController extends Controller
             'user_id' => auth()->id(),
         ]);
 
-        // Update product stock
         if ($validated['type'] === 'in') {
             $product->increment('stock', $validated['quantity']);
         } else {

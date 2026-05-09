@@ -2,115 +2,101 @@
 @section('title', 'Laporan Bulanan')
 @section('page-title', 'Laporan Penjualan Bulanan')
 @section('content')
-{{-- Filter --}}
-<div class="mb-4 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
-    <form action="{{ route('reports.monthly') }}" method="GET" class="flex flex-wrap items-end gap-3">
-        <div>
-            <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-400">Bulan</label>
-            <select name="month" class="h-11 rounded-lg border border-gray-300 bg-transparent px-4 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white/90">
-                @foreach(range(1, 12) as $m)
-                <option value="{{ sprintf('%02d', $m) }}" {{ $month == sprintf('%02d', $m) ? 'selected' : '' }}>{{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div>
-            <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-400">Tahun</label>
-            <select name="year" class="h-11 rounded-lg border border-gray-300 bg-transparent px-4 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white/90">
-                @foreach(range(date('Y')-2, date('Y')) as $y)<option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>{{ $y }}</option>@endforeach
-            </select>
-        </div>
-        <button type="submit" class="h-11 rounded-lg bg-brand-500 px-6 text-sm font-medium text-white hover:bg-brand-600">Tampilkan</button>
-        <button type="button" onclick="window.print()" class="no-print h-11 rounded-lg border border-gray-300 px-5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300">🖨️ Cetak</button>
-    </form>
+
+<div class="mb-4 rounded-2xl border border-gray-200 bg-white p-5 relative z-20">
+ <form action="{{ route('reports.monthly') }}" method="GET" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+ <div class="grid grid-cols-2 gap-3">
+ <div>
+ <label class="mb-1 block text-sm font-medium text-gray-700 ">Bulan</label>
+ <div class="relative w-full" x-data="{ open: false, selected: '{{ \Carbon\Carbon::create()->month((int)$month)->translatedFormat('F') }}' }">
+ <button type="button" @click="open = !open" class="custom-select-trigger w-full">
+ <span x-text="selected"></span>
+ <svg class="fill-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" width="18" height="18" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+ </button>
+ <div x-show="open" @click.outside="open = false" x-transition class="custom-select-dropdown max-h-28 overflow-y-auto w-full">
+ @foreach(range(1, 12) as $m)
+ <div @click="selected = '{{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}'; open = false; $refs.monthInput.value = '{{ sprintf('%02d', $m) }}';" class="custom-select-option" :class="$refs.monthInput.value == '{{ sprintf('%02d', $m) }}' ? 'custom-select-option-active' : 'custom-select-option-inactive'">{{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}</div>
+ @endforeach
+ </div>
+ <input type="hidden" name="month" x-ref="monthInput" value="{{ $month }}">
+ </div>
+ </div>
+ <div>
+ <label class="mb-1 block text-sm font-medium text-gray-700 ">Tahun</label>
+ <div class="relative w-full" x-data="{ open: false, selected: '{{ $year }}' }">
+ <button type="button" @click="open = !open" class="custom-select-trigger w-full">
+ <span x-text="selected"></span>
+ <svg class="fill-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" width="18" height="18" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+ </button>
+ <div x-show="open" @click.outside="open = false" x-transition class="custom-select-dropdown w-full">
+ @foreach(range(date('Y')-2, date('Y')) as $y)
+ <div @click="selected = '{{ $y }}'; open = false; $refs.yearInput.value = '{{ $y }}';" class="custom-select-option" :class="$refs.yearInput.value == '{{ $y }}' ? 'custom-select-option-active' : 'custom-select-option-inactive'">{{ $y }}</div>
+ @endforeach
+ </div>
+ <input type="hidden" name="year" x-ref="yearInput" value="{{ $year }}">
+ </div>
+ </div>
+ </div>
+ <div class="flex items-end gap-3 w-full">
+ <button type="submit" class="h-11 flex-1 rounded-lg bg-brand-500 px-6 text-sm font-medium text-white hover:bg-brand-600">Tampilkan</button>
+ <button type="button" onclick="window.print()" class="no-print h-11 flex-1 rounded-lg border border-gray-300 px-5 text-sm font-medium text-gray-700 hover:bg-gray-50 ">Cetak</button>
+ </div>
+ </form>
 </div>
 
-{{-- Summary --}}
-<div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-6">
-    <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
-        <p class="text-theme-sm text-gray-500">Total Pendapatan</p>
-        <h3 class="text-xl font-bold text-brand-500">Rp {{ number_format($summary['total_revenue'], 0, ',', '.') }}</h3>
-    </div>
-    <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
-        <p class="text-theme-sm text-gray-500">Total Transaksi</p>
-        <h3 class="text-xl font-bold text-gray-800 dark:text-white/90">{{ $summary['total_transactions'] }}</h3>
-    </div>
-    <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
-        <p class="text-theme-sm text-gray-500">Rata-rata</p>
-        <h3 class="text-xl font-bold text-gray-800 dark:text-white/90">Rp {{ number_format($summary['average_transaction'], 0, ',', '.') }}</h3>
-    </div>
+<div class="grid grid-cols-1 gap-2 sm:grid-cols-3 mb-4">
+ <div class="rounded-xl border border-gray-200 bg-white p-4 flex flex-col justify-center">
+ <p class="text-[10px] uppercase tracking-wider font-semibold text-gray-500 mb-1">Total Pendapatan</p>
+ <h3 class="text-lg font-bold text-brand-500 leading-none">Rp {{ number_format($summary['total_revenue'], 0, ',', '.') }}</h3>
+ </div>
+ <div class="rounded-xl border border-gray-200 bg-white p-4 flex flex-col justify-center">
+ <p class="text-[10px] uppercase tracking-wider font-semibold text-gray-500 mb-1">Total Transaksi</p>
+ <h3 class="text-lg font-bold text-gray-800 leading-none">{{ $summary['total_transactions'] }}</h3>
+ </div>
+ <div class="rounded-xl border border-gray-200 bg-white p-4 flex flex-col justify-center">
+ <p class="text-[10px] uppercase tracking-wider font-semibold text-gray-500 mb-1">Rata-rata</p>
+ <h3 class="text-lg font-bold text-gray-800 leading-none">Rp {{ number_format($summary['average_transaction'], 0, ',', '.') }}</h3>
+ </div>
 </div>
 
-{{-- Charts --}}
-<div class="grid grid-cols-12 gap-4 mb-6">
-    <div class="col-span-12 xl:col-span-8">
-        <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
-            <div class="border-b border-gray-200 px-6 py-4 dark:border-gray-800"><h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Grafik Penjualan</h3></div>
-            <div class="p-6"><canvas id="salesChart" height="300"></canvas></div>
-        </div>
-    </div>
-    <div class="col-span-12 xl:col-span-4">
-        <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] h-full">
-            <div class="border-b border-gray-200 px-6 py-4 dark:border-gray-800"><h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Metode Bayar</h3></div>
-            <div class="flex items-center justify-center p-6">
-                @php $cashCount = $transactions->where('payment_method', 'cash')->count(); $transferCount = $transactions->where('payment_method', 'transfer')->count(); @endphp
-                @if($transactions->count() > 0)<canvas id="methodChart"></canvas>@else<p class="text-sm text-gray-500">Data tidak tersedia</p>@endif
-            </div>
-        </div>
-    </div>
-</div>
-
-{{-- Table --}}
-<div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
-    <div class="border-b border-gray-200 px-6 py-4 dark:border-gray-800"><h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Ringkasan Harian - {{ \Carbon\Carbon::create()->month((int)$month)->translatedFormat('F') }} {{ $year }}</h3></div>
-    <div class="overflow-x-auto">
-        <table class="w-full"><thead><tr class="border-b border-gray-100 dark:border-gray-800">
-            <th class="px-6 py-3 text-left text-theme-xs font-medium uppercase text-gray-500">Tanggal</th>
-            <th class="px-6 py-3 text-left text-theme-xs font-medium uppercase text-gray-500">Jumlah Transaksi</th>
-            <th class="px-6 py-3 text-right text-theme-xs font-medium uppercase text-gray-500">Total Pendapatan</th>
-        </tr></thead>
-        <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
-            @php $totalRev = 0; $totalTrans = 0; @endphp
-            @foreach(array_reverse($chartData) as $data)
-                @if($data['revenue'] > 0)
-                @php $totalRev += $data['revenue']; $dayCount = $transactions->filter(fn($t) => $t->created_at->format('d') == $data['day'])->count(); $totalTrans += $dayCount; @endphp
-                <tr class="hover:bg-gray-50 dark:hover:bg-white/[0.02]">
-                    <td class="px-6 py-3 text-sm text-gray-700 dark:text-gray-300">{{ $data['day'] }} {{ \Carbon\Carbon::create()->month((int)$month)->translatedFormat('F') }}</td>
-                    <td class="px-6 py-3 text-sm text-gray-500">{{ $dayCount }}</td>
-                    <td class="px-6 py-3 text-right text-sm font-bold text-brand-500">Rp {{ number_format($data['revenue'], 0, ',', '.') }}</td>
-                </tr>
-                @endif
-            @endforeach
-        </tbody>
-        @if($totalRev > 0)
-        <tfoot><tr class="border-t-2 border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800/50">
-            <td class="px-6 py-3 text-sm font-bold text-gray-800 dark:text-white/90">TOTAL</td>
-            <td class="px-6 py-3 text-sm font-bold text-gray-800 dark:text-white/90">{{ $totalTrans }}</td>
-            <td class="px-6 py-3 text-right text-sm font-bold text-brand-500">Rp {{ number_format($totalRev, 0, ',', '.') }}</td>
-        </tr></tfoot>
-        @else
-        <tbody><tr><td colspan="3" class="px-6 py-8 text-center text-sm text-gray-500">Tidak ada data.</td></tr></tbody>
-        @endif
-        </table>
-    </div>
+<div class="rounded-xl border border-gray-200 bg-white overflow-hidden flex flex-col" style="height: 400px !important;">
+ <div class="border-b border-gray-200 px-6 py-3 flex-none"><h3 class="text-sm font-bold text-gray-800 ">Ringkasan Harian - {{ \Carbon\Carbon::create()->month((int)$month)->translatedFormat('F') }} {{ $year }}</h3></div>
+ <div class="flex-1 overflow-y-auto no-scrollbar">
+ <table class="w-full text-sm">
+ <thead class="sticky top-0 bg-white z-10"><tr class="border-b border-gray-100 ">
+ <th class="px-6 py-3 text-left text-[10px] font-bold uppercase text-gray-500">Tanggal</th>
+ <th class="px-6 py-3 text-left text-[10px] font-bold uppercase text-gray-500">Jumlah Transaksi</th>
+ <th class="px-6 py-3 text-right text-[10px] font-bold uppercase text-gray-500">Total Pendapatan</th>
+ </tr></thead>
+ <tbody class="divide-y divide-gray-100 ">
+ @php $totalRev = 0; $totalTrans = 0; @endphp
+ @foreach(array_reverse($chartData) as $data)
+ @if($data['revenue'] > 0)
+ @php $totalRev += $data['revenue']; $dayCount = $transactions->filter(fn($t) => $t->created_at->format('d') == $data['day'])->count(); $totalTrans += $dayCount; @endphp
+ <tr class="hover:bg-gray-50 ">
+ <td class="px-6 py-3 text-gray-700 ">{{ $data['day'] }} {{ \Carbon\Carbon::create()->month((int)$month)->translatedFormat('F') }}</td>
+ <td class="px-6 py-3 text-gray-500">{{ $dayCount }}</td>
+ <td class="px-6 py-3 text-right font-bold text-brand-500">Rp {{ number_format($data['revenue'], 0, ',', '.') }}</td>
+ </tr>
+ @endif
+ @endforeach
+ </tbody>
+ </table>
+ </div>
+ @if($totalRev > 0)
+ <div class="border-t border-gray-200 bg-white px-6 py-3 flex-none">
+ <div class="flex justify-between items-center font-bold text-sm">
+ <div class="text-gray-800 ">TOTAL ({{ $totalTrans }} Transaksi)</div>
+ <div class="text-brand-500">Rp {{ number_format($totalRev, 0, ',', '.') }}</div>
+ </div>
+ </div>
+ @endif
 </div>
 @endsection
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    new Chart(document.getElementById('salesChart').getContext('2d'), {
-        type: 'line',
-        data: { labels: {!! json_encode(array_column($chartData, 'day')) !!}, datasets: [{ label: 'Pendapatan', data: {!! json_encode(array_column($chartData, 'revenue')) !!}, borderColor: '#465fff', backgroundColor: 'rgba(70,95,255,0.1)', borderWidth: 3, fill: true, tension: 0.4, pointRadius: 3, pointBackgroundColor: '#465fff' }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { callback: v => 'Rp ' + v.toLocaleString() } } } }
-    });
-    @if($transactions->count() > 0)
-    new Chart(document.getElementById('methodChart').getContext('2d'), {
-        type: 'doughnut',
-        data: { labels: ['Cash', 'Transfer'], datasets: [{ data: [{{ $cashCount }}, {{ $transferCount }}], backgroundColor: ['#12b76a', '#465fff'], borderWidth: 0 }] },
-        options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
-    });
-    @endif
 });
 </script>
 @endpush

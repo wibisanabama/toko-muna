@@ -17,7 +17,7 @@ Route::middleware('guest')->group(function () {
 
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
-    
+
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 });
@@ -25,28 +25,21 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
-    // Kategori Produk
+
     Route::resource('categories', CategoryController::class)->except(['show']);
-    
-    // Produk
+
     Route::resource('products', ProductController::class);
 
-    // Manajemen Stok
     Route::resource('stock-movements', StockMovementController::class)->only(['index', 'create', 'store']);
 
-    // Laporan
     Route::get('/reports/daily', [ReportController::class, 'daily'])->name('reports.daily');
     Route::get('/reports/monthly', [ReportController::class, 'monthly'])->name('reports.monthly');
 
-    // User Management (Admin Only)
     Route::resource('users', \App\Http\Controllers\UserController::class)->except(['show'])->middleware('role:admin');
-    
-    // POS (Kasir)
+
     Route::get('/pos', [\App\Http\Controllers\PosController::class, 'index'])->name('pos.index');
     Route::post('/pos/checkout', [\App\Http\Controllers\PosController::class, 'checkout'])->name('pos.checkout');
 
-    // Riwayat Transaksi
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::get('/transactions/{id}/print', [TransactionController::class, 'show'])->name('transactions.print');
 });

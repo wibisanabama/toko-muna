@@ -14,7 +14,7 @@ class PosController extends Controller
     public function index(Request $request)
     {
         $query = Product::with('category')->where('stock', '>', 0);
-        
+
         if ($request->has('search') && !empty($request->search)) {
             $searchTerm = $request->search;
             $query->where(function($q) use ($searchTerm) {
@@ -22,13 +22,10 @@ class PosController extends Controller
                   ->orWhere('sku', 'like', "%{$searchTerm}%");
             });
         }
-        
-        $products = $query->paginate(12)->withQueryString();
 
-        // Convert the products to a collection to pass to Alpine JS easily
-        $productsForJs = $products->items();
-        
-        return view('pos.index', compact('products', 'productsForJs'));
+        $products = $query->get();
+
+        return view('pos.index', compact('products'));
     }
 
     /**
@@ -52,7 +49,7 @@ class PosController extends Controller
 
             foreach ($request->items as $item) {
                 $product = Product::lockForUpdate()->find($item['id']);
-                
+
                 if ($product->stock < $item['quantity']) {
                     throw new \Exception("Stok tidak mencukupi untuk produk: {$product->name}");
                 }
@@ -67,11 +64,9 @@ class PosController extends Controller
                     'subtotal' => $subtotal,
                 ];
 
-                // Deduct stock
                 $product->stock -= $item['quantity'];
                 $product->save();
 
-                // Record stock movement
                 \App\Models\StockMovement::create([
                     'product_id' => $product->id,
                     'user_id' => auth()->id(),
