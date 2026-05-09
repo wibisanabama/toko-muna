@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StockMovementController;
 use App\Models\Product;
 use Illuminate\Support\Facades\Route;
@@ -32,6 +33,10 @@ Route::middleware('auth')->group(function () {
 
     // Manajemen Stok
     Route::resource('stock-movements', StockMovementController::class)->only(['index', 'create', 'store']);
+
+    // Laporan
+    Route::get('/reports/daily', [ReportController::class, 'daily'])->name('reports.daily');
+    Route::get('/reports/monthly', [ReportController::class, 'monthly'])->name('reports.monthly');
 
     // User Management (Admin Only)
     Route::resource('users', \App\Http\Controllers\UserController::class)->except(['show'])->middleware('role:admin');
