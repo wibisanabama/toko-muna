@@ -20,7 +20,7 @@ class ProductFactory extends Factory
         return [
             'category_id' => \App\Models\Category::factory(),
             'name' => fake()->words(3, true),
-            'barcode' => fake()->ean13(),
+            'sku' => fake()->ean13(),
             'price' => fake()->randomElement([5000, 10000, 15000, 20000, 25000, 50000, 100000]),
             'stock' => fake()->numberBetween(10, 100),
             'description' => fake()->sentence(),

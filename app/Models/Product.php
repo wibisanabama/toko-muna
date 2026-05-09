@@ -13,7 +13,7 @@ class Product extends Model
     protected $fillable = [
         'category_id',
         'name',
-        'barcode',
+        'sku',
         'price',
         'stock',
         'image',
@@ -23,5 +23,10 @@ class Product extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function stockMovements()
+    {
+        return $this->hasMany(StockMovement::class);
     }
 }

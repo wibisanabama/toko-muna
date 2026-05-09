@@ -40,7 +40,7 @@
                 <form action="{{ route('pos.index') }}" method="GET" class="d-flex gap-2">
                     <div class="input-group">
                         <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
-                        <input type="text" name="search" value="{{ request('search') }}" class="form-control border-start-0 ps-0" placeholder="Cari nama produk atau barcode...">
+                        <input type="text" name="search" value="{{ request('search') }}" class="form-control border-start-0 ps-0" placeholder="Cari nama produk atau SKU...">
                     </div>
                     <button type="submit" class="btn btn-primary px-4">Cari</button>
                     @if(request('search'))

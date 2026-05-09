@@ -237,8 +237,13 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('products.*') ? 'active' : '' }}" href="#">
+                    <a class="nav-link {{ request()->routeIs('products.*') ? 'active' : '' }}" href="{{ route('products.index') }}">
                         <i class="bi bi-box-seam-fill"></i> Produk
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('stock-movements.*') ? 'active' : '' }}" href="{{ route('stock-movements.index') }}">
+                        <i class="bi bi-arrow-left-right"></i> Stok
                     </a>
                 </li>
                 <li class="nav-item">
@@ -256,11 +261,13 @@
                         <i class="bi bi-bar-chart-line-fill"></i> Laporan
                     </a>
                 </li>
+                @if(auth()->user()->isAdmin())
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}" href="#">
+                    <a class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}" href="{{ route('users.index') }}">
                         <i class="bi bi-people-fill"></i> User
                     </a>
                 </li>
+                @endif
             </ul>
         </nav>
     </aside>

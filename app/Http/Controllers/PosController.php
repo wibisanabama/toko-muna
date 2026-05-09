@@ -18,7 +18,7 @@ class PosController extends Controller
             $searchTerm = $request->search;
             $query->where(function($q) use ($searchTerm) {
                 $q->where('name', 'like', "%{$searchTerm}%")
-                  ->orWhere('barcode', 'like', "%{$searchTerm}%");
+                  ->orWhere('sku', 'like', "%{$searchTerm}%");
             });
         }
         
