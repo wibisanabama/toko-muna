@@ -253,6 +253,7 @@
 <body>
     <div class="loading-bar" id="loadingBar"></div>
     <!-- Sidebar -->
+    @auth
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-brand">
             <h4><i class="bi bi-shop"></i> Toko Muna</h4>
@@ -310,10 +311,12 @@
             </ul>
         </nav>
     </aside>
+    @endauth
 
     <!-- Main Content -->
-    <div class="main-content">
+    <div class="main-content" @guest style="margin-left: 0;" @endguest>
         <!-- Topbar -->
+        @auth
         <header class="topbar">
             <div class="d-flex align-items-center gap-3">
                 <button class="sidebar-toggle" onclick="document.getElementById('sidebar').classList.toggle('show')">
@@ -323,7 +326,6 @@
             </div>
             <div class="d-flex align-items-center gap-3">
                 <span class="text-muted small d-none d-md-inline">{{ now()->translatedFormat('l, d F Y') }}</span>
-                @auth
                 <div class="dropdown">
                     <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
                         <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=6C5CE7&color=fff" alt="User" width="32" height="32" class="rounded-circle me-2 border border-2 border-primary-subtle">
@@ -344,9 +346,9 @@
                         </li>
                     </ul>
                 </div>
-                @endauth
             </div>
         </header>
+        @endauth
 
         <!-- Content -->
         <main class="content-area">
