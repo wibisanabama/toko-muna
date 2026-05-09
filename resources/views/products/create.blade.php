@@ -1,90 +1,57 @@
 @extends('layouts.app')
-
 @section('title', 'Tambah Produk')
 @section('page-title', 'Tambah Produk')
-
 @section('content')
-<div class="row justify-content-center">
-    <div class="col-lg-8">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-plus-circle me-2"></i>Tambah Produk Baru</h5>
-            </div>
-            <div class="card-body">
-                <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-
-                    <div class="row">
-                        <div class="col-md-8 mb-3">
-                            <label for="name" class="form-label fw-semibold">Nama Produk <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('name') is-invalid @enderror" 
-                                   id="name" name="name" value="{{ old('name') }}" required autofocus>
-                            @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                        </div>
-
-                        <div class="col-md-4 mb-3">
-                            <label for="sku" class="form-label fw-semibold">SKU / Barcode <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('sku') is-invalid @enderror" 
-                                   id="sku" name="sku" value="{{ old('sku') }}" required>
-                            @error('sku')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                        </div>
+<div class="mx-auto max-w-3xl">
+    <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+        <div class="border-b border-gray-200 px-6 py-4 dark:border-gray-800"><h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Tambah Produk Baru</h3></div>
+        <div class="p-6">
+            <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                    <div class="sm:col-span-1">
+                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Nama Produk <span class="text-error-500">*</span></label>
+                        <input type="text" name="name" value="{{ old('name') }}" required autofocus class="dark:bg-gray-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800">
+                        @error('name')<p class="mt-1 text-sm text-error-500">{{ $message }}</p>@enderror
                     </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="category_id" class="form-label fw-semibold">Kategori</label>
-                            <select class="form-select @error('category_id') is-invalid @enderror" id="category_id" name="category_id">
-                                <option value="">Pilih Kategori</option>
-                                @foreach($categories as $category)
-                                    <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
-                                        {{ $category->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('category_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                        </div>
-
-                        <div class="col-md-3 mb-3">
-                            <label for="price" class="form-label fw-semibold">Harga <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text">Rp</span>
-                                <input type="number" min="0" class="form-control @error('price') is-invalid @enderror" 
-                                       id="price" name="price" value="{{ old('price') }}" required>
-                            </div>
-                            @error('price')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
-                        </div>
-
-                        <div class="col-md-3 mb-3">
-                            <label for="stock" class="form-label fw-semibold">Stok <span class="text-danger">*</span></label>
-                            <input type="number" min="0" class="form-control @error('stock') is-invalid @enderror" 
-                                   id="stock" name="stock" value="{{ old('stock', 0) }}" required>
-                            @error('stock')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                        </div>
+                    <div>
+                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">SKU / Barcode <span class="text-error-500">*</span></label>
+                        <input type="text" name="sku" value="{{ old('sku') }}" required class="dark:bg-gray-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800">
+                        @error('sku')<p class="mt-1 text-sm text-error-500">{{ $message }}</p>@enderror
                     </div>
-
-                    <div class="mb-3">
-                        <label for="image" class="form-label fw-semibold">Gambar Produk (Max: 2MB)</label>
-                        <input class="form-control @error('image') is-invalid @enderror" type="file" id="image" name="image" accept="image/*">
-                        @error('image')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    <div>
+                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Kategori</label>
+                        <select name="category_id" class="dark:bg-gray-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800">
+                            <option value="">Pilih Kategori</option>
+                            @foreach($categories as $cat)<option value="{{ $cat->id }}" {{ old('category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>@endforeach
+                        </select>
                     </div>
-
-                    <div class="mb-4">
-                        <label for="description" class="form-label fw-semibold">Deskripsi</label>
-                        <textarea class="form-control @error('description') is-invalid @enderror" 
-                                  id="description" name="description" rows="4">{{ old('description') }}</textarea>
-                        @error('description')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    <div>
+                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Harga <span class="text-error-500">*</span></label>
+                        <div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-gray-500">Rp</span>
+                        <input type="number" min="0" name="price" value="{{ old('price') }}" required class="dark:bg-gray-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pl-10 pr-4 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800"></div>
+                        @error('price')<p class="mt-1 text-sm text-error-500">{{ $message }}</p>@enderror
                     </div>
-
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-check-lg me-1"></i>Simpan
-                        </button>
-                        <a href="{{ route('products.index') }}" class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-left me-1"></i>Kembali
-                        </a>
+                    <div>
+                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Stok <span class="text-error-500">*</span></label>
+                        <input type="number" min="0" name="stock" value="{{ old('stock', 0) }}" required class="dark:bg-gray-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800">
+                        @error('stock')<p class="mt-1 text-sm text-error-500">{{ $message }}</p>@enderror
                     </div>
-                </form>
-            </div>
+                    <div>
+                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Gambar (Max: 2MB)</label>
+                        <input type="file" name="image" accept="image/*" class="dark:bg-gray-900 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2 text-sm text-gray-800 file:mr-4 file:rounded-lg file:border-0 file:bg-brand-50 file:px-4 file:py-1.5 file:text-sm file:font-medium file:text-brand-500 hover:file:bg-brand-100 dark:border-gray-700 dark:text-white/90">
+                        @error('image')<p class="mt-1 text-sm text-error-500">{{ $message }}</p>@enderror
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Deskripsi</label>
+                        <textarea name="description" rows="3" class="dark:bg-gray-900 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800">{{ old('description') }}</textarea>
+                    </div>
+                </div>
+                <div class="mt-6 flex items-center gap-3">
+                    <button type="submit" class="rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-medium text-white shadow-theme-xs hover:bg-brand-600">Simpan</button>
+                    <a href="{{ route('products.index') }}" class="rounded-lg border border-gray-300 px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-white/5">Kembali</a>
+                </div>
+            </form>
         </div>
     </div>
 </div>

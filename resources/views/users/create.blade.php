@@ -1,100 +1,43 @@
 @extends('layouts.app')
-
-@section('title', 'Tambah User - ' . config('app.name'))
-
+@section('title', 'Tambah User')
+@section('page-title', 'Tambah User')
 @section('content')
-<div class="min-h-full">
-    <!-- Navbar (Same as index, consider extracting to a component later) -->
-    <nav class="bg-white shadow-sm">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="flex h-16 justify-between">
-                <div class="flex">
-                    <div class="flex shrink-0 items-center">
-                        <span class="text-xl font-bold text-blue-600">Toko Muna</span>
+<div class="mx-auto max-w-2xl">
+    <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+        <div class="border-b border-gray-200 px-6 py-4 dark:border-gray-800"><h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Tambah User Baru</h3></div>
+        <div class="p-6">
+            <form action="{{ route('users.store') }}" method="POST">
+                @csrf
+                <div class="space-y-5">
+                    <div>
+                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Nama Lengkap <span class="text-error-500">*</span></label>
+                        <input type="text" name="name" value="{{ old('name') }}" required class="dark:bg-gray-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800">
+                        @error('name')<p class="mt-1 text-sm text-error-500">{{ $message }}</p>@enderror
                     </div>
-                    <div class="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
-                        <a href="{{ route('dashboard') }}" class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700">Dashboard</a>
-                        <a href="{{ route('users.index') }}" class="inline-flex items-center border-b-2 border-blue-500 px-1 pt-1 text-sm font-medium text-gray-900">Users</a>
+                    <div>
+                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Email <span class="text-error-500">*</span></label>
+                        <input type="email" name="email" value="{{ old('email') }}" required class="dark:bg-gray-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800">
+                        @error('email')<p class="mt-1 text-sm text-error-500">{{ $message }}</p>@enderror
+                    </div>
+                    <div>
+                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Password <span class="text-error-500">*</span></label>
+                        <input type="password" name="password" required class="dark:bg-gray-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800">
+                        @error('password')<p class="mt-1 text-sm text-error-500">{{ $message }}</p>@enderror
+                    </div>
+                    <div>
+                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Role <span class="text-error-500">*</span></label>
+                        <select name="role" required class="dark:bg-gray-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90 dark:focus:border-brand-800">
+                            <option value="kasir" {{ old('role') === 'kasir' ? 'selected' : '' }}>Kasir</option>
+                            <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Admin</option>
+                        </select>
                     </div>
                 </div>
-                <div class="flex items-center">
-                    <span class="text-sm text-gray-700 mr-4">Halo, {{ Auth::user()->name }}</span>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-gray-50">
-                            Logout
-                        </button>
-                    </form>
+                <div class="mt-6 flex items-center gap-3">
+                    <button type="submit" class="rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-medium text-white shadow-theme-xs hover:bg-brand-600">Simpan</button>
+                    <a href="{{ route('users.index') }}" class="rounded-lg border border-gray-300 px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-white/5">Batal</a>
                 </div>
-            </div>
+            </form>
         </div>
-    </nav>
-
-    <div class="py-10">
-        <header>
-            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <h1 class="text-3xl font-bold tracking-tight text-gray-900">Tambah User</h1>
-            </div>
-        </header>
-        <main>
-            <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900">
-                        <form action="{{ route('users.store') }}" method="POST" class="space-y-6 max-w-2xl">
-                            @csrf
-                            
-                            <div>
-                                <label for="name" class="block text-sm/6 font-medium text-gray-900">Nama Lengkap</label>
-                                <div class="mt-2">
-                                    <input type="text" name="name" id="name" value="{{ old('name') }}" required class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
-                                </div>
-                                @error('name')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div>
-                                <label for="email" class="block text-sm/6 font-medium text-gray-900">Email</label>
-                                <div class="mt-2">
-                                    <input type="email" name="email" id="email" value="{{ old('email') }}" required class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
-                                </div>
-                                @error('email')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div>
-                                <label for="password" class="block text-sm/6 font-medium text-gray-900">Password</label>
-                                <div class="mt-2">
-                                    <input type="password" name="password" id="password" required class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
-                                </div>
-                                @error('password')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div>
-                                <label for="role" class="block text-sm/6 font-medium text-gray-900">Role</label>
-                                <div class="mt-2">
-                                    <select id="role" name="role" required class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
-                                        <option value="kasir" {{ old('role') === 'kasir' ? 'selected' : '' }}>Kasir</option>
-                                        <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Admin</option>
-                                    </select>
-                                </div>
-                                @error('role')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div class="flex justify-end gap-3">
-                                <a href="{{ route('users.index') }}" class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Batal</a>
-                                <button type="submit" class="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500">Simpan</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </main>
     </div>
 </div>
 @endsection

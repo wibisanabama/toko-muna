@@ -4,374 +4,141 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', config('app.name', 'Toko Muna')) - Toko Muna POS</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #6C5CE7;
-            --primary-dark: #5A4BD1;
-            --secondary: #0984E3;
-            --accent: #00CEC9;
-            --dark: #1E1E2E;
-            --dark-light: #2D2D44;
-            --sidebar-width: 260px;
-        }
-
-        * { font-family: 'Inter', sans-serif; }
-
-        body {
-            background: #F0F2F5;
-            min-height: 100vh;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: var(--sidebar-width);
-            height: 100vh;
-            background: linear-gradient(180deg, var(--dark) 0%, var(--dark-light) 100%);
-            z-index: 1000;
-            transition: transform 0.3s ease;
-            overflow-y: auto;
-        }
-
-        .sidebar-brand {
-            padding: 1.5rem;
-            text-align: center;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .sidebar-brand h4 {
-            color: #fff;
-            margin: 0;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-size: 1.4rem;
-        }
-
-        .sidebar-brand small {
-            color: rgba(255,255,255,0.5);
-            font-size: 0.75rem;
-        }
-
-        .sidebar-nav {
-            padding: 1rem 0;
-        }
-
-        .sidebar-nav .nav-item {
-            padding: 0 0.75rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .sidebar-nav .nav-link {
-            color: rgba(255,255,255,0.7);
-            padding: 0.75rem 1rem;
-            border-radius: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            transition: all 0.2s;
-            font-size: 0.9rem;
-        }
-
-        .sidebar-nav .nav-link:hover {
-            color: #fff;
-            background: rgba(108, 92, 231, 0.2);
-        }
-
-        .sidebar-nav .nav-link.active {
-            color: #fff;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.4);
-        }
-
-        .sidebar-nav .nav-link i {
-            font-size: 1.1rem;
-            width: 24px;
-            text-align: center;
-        }
-
-        /* Main Content */
-        .main-content {
-            margin-left: var(--sidebar-width);
-            min-height: 100vh;
-        }
-
-        /* Topbar */
-        .topbar {
-            background: #fff;
-            padding: 1rem 1.5rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 999;
-        }
-
-        .topbar .page-title {
-            font-weight: 600;
-            font-size: 1.1rem;
-            color: var(--dark);
-        }
-
-        /* Content Area */
-        .content-area {
-            padding: 1.5rem;
-        }
-
-        /* Cards */
-        .card {
-            border: none;
-            border-radius: 0.75rem;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
-
-        .card-header {
-            background: transparent;
-            border-bottom: 1px solid rgba(0,0,0,0.06);
-            padding: 1rem 1.25rem;
-            font-weight: 600;
-        }
-
-        /* Buttons */
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border: none;
-            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
-            transition: all 0.2s;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4);
-            background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
-        }
-
-        .btn-outline-primary {
-            color: var(--primary);
-            border-color: var(--primary);
-        }
-
-        .btn-outline-primary:hover {
-            background: var(--primary);
-            border-color: var(--primary);
-        }
-
-        /* Tables */
-        .table th {
-            background: #F8F9FA;
-            font-weight: 600;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #6C757D;
-        }
-
-        .table td {
-            vertical-align: middle;
-        }
-
-        /* Alerts */
-        .alert {
-            border: none;
-            border-radius: 0.5rem;
-        }
-
-        /* Mobile Sidebar Toggle */
-        .sidebar-toggle {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.4rem;
-            color: var(--dark);
-        }
-
-        /* Loading Bar */
-        .loading-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent), var(--secondary), var(--primary));
-            width: 100%;
-            z-index: 9999;
-            animation: loading 2s infinite ease-in-out;
-            display: none;
-        }
-
-        @keyframes loading {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-
-        /* Better Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #ccc;
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary);
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            .sidebar.show {
-                transform: translateX(0);
-            }
-            .main-content {
-                margin-left: 0;
-            }
-            .sidebar-toggle {
-                display: block;
-            }
-        }
-    </style>
+    <title>@yield('title', 'Dashboard') - Toko Muna POS</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
 </head>
-<body>
-    <div class="loading-bar" id="loadingBar"></div>
-    <!-- Sidebar -->
-    @auth
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-brand">
-            <h4><i class="bi bi-shop"></i> Toko Muna</h4>
-            <small>Point of Sale System</small>
+<body x-data="{ page: '{{ request()->route()->getName() }}', darkMode: false, sidebarToggle: false, stickyMenu: false }" x-init="darkMode = JSON.parse(localStorage.getItem('darkMode')); $watch('darkMode', v => localStorage.setItem('darkMode', JSON.stringify(v)))" :class="{'dark bg-gray-900': darkMode}">
+@auth
+<div class="flex h-screen overflow-hidden">
+    {{-- Sidebar --}}
+    <aside :class="sidebarToggle ? 'translate-x-0' : '-translate-x-full'" class="sidebar fixed left-0 top-0 z-9999 flex h-screen w-[290px] flex-col overflow-y-hidden border-r border-gray-200 bg-white px-5 duration-300 ease-linear dark:border-gray-800 dark:bg-gray-900 lg:static lg:translate-x-0" @click.outside="sidebarToggle = false">
+        <div class="flex items-center justify-between gap-2 pb-7 pt-8">
+            <a href="{{ route('dashboard') }}" class="flex items-center gap-2">
+                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-500">
+                    <svg class="fill-white" width="20" height="20" viewBox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/></svg>
+                </div>
+                <span class="text-xl font-bold text-gray-800 dark:text-white">Toko Muna</span>
+            </a>
         </div>
-        <nav class="sidebar-nav">
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') ?? '#' }}">
-                        <i class="bi bi-grid-1x2-fill"></i> Dashboard
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('categories.*') ? 'active' : '' }}" href="{{ route('categories.index') }}">
-                        <i class="bi bi-tags-fill"></i> Kategori
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('products.*') ? 'active' : '' }}" href="{{ route('products.index') }}">
-                        <i class="bi bi-box-seam-fill"></i> Produk
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('stock-movements.*') ? 'active' : '' }}" href="{{ route('stock-movements.index') }}">
-                        <i class="bi bi-arrow-left-right"></i> Stok
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('pos.*') ? 'active' : '' }}" href="{{ route('pos.index') }}">
-                        <i class="bi bi-calculator-fill"></i> Kasir
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('transactions.*') ? 'active' : '' }}" href="{{ route('transactions.index') }}">
-                        <i class="bi bi-receipt-cutoff"></i> Transaksi
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('reports.daily') ? 'active' : '' }}" href="{{ route('reports.daily') }}">
-                        <i class="bi bi-calendar2-check"></i> Laporan Harian
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('reports.monthly') ? 'active' : '' }}" href="{{ route('reports.monthly') }}">
-                        <i class="bi bi-bar-chart-line-fill"></i> Laporan Bulanan
-                    </a>
-                </li>
-                @if(auth()->user()->isAdmin())
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}" href="{{ route('users.index') }}">
-                        <i class="bi bi-people-fill"></i> User
-                    </a>
-                </li>
-                @endif
-            </ul>
-        </nav>
+        <div class="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
+            <nav>
+                <div>
+                    <h3 class="mb-4 text-xs uppercase leading-5 text-gray-400">Menu</h3>
+                    <ul class="mb-6 flex flex-col gap-2">
+                        <li><a href="{{ route('dashboard') }}" class="menu-item group {{ request()->routeIs('dashboard') ? 'menu-item-active' : 'menu-item-inactive' }}">
+                            <svg class="{{ request()->routeIs('dashboard') ? 'fill-brand-500' : 'fill-gray-500' }}" width="20" height="20" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+                            <span>Dashboard</span></a></li>
+                        <li><a href="{{ route('pos.index') }}" class="menu-item group {{ request()->routeIs('pos.*') ? 'menu-item-active' : 'menu-item-inactive' }}">
+                            <svg class="{{ request()->routeIs('pos.*') ? 'fill-brand-500' : 'fill-gray-500' }}" width="20" height="20" viewBox="0 0 24 24"><path d="M17 2H7a2 2 0 00-2 2v16a2 2 0 002 2h10a2 2 0 002-2V4a2 2 0 00-2-2zm-3 18h-4v-1h4v1zm3-3H7V5h10v12z"/></svg>
+                            <span>Kasir (POS)</span></a></li>
+                    </ul>
+                    <h3 class="mb-4 text-xs uppercase leading-5 text-gray-400">Manajemen</h3>
+                    <ul class="mb-6 flex flex-col gap-2">
+                        <li><a href="{{ route('categories.index') }}" class="menu-item group {{ request()->routeIs('categories.*') ? 'menu-item-active' : 'menu-item-inactive' }}">
+                            <svg class="{{ request()->routeIs('categories.*') ? 'fill-brand-500' : 'fill-gray-500' }}" width="20" height="20" viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+                            <span>Kategori</span></a></li>
+                        <li><a href="{{ route('products.index') }}" class="menu-item group {{ request()->routeIs('products.*') ? 'menu-item-active' : 'menu-item-inactive' }}">
+                            <svg class="{{ request()->routeIs('products.*') ? 'fill-brand-500' : 'fill-gray-500' }}" width="20" height="20" viewBox="0 0 24 24"><path d="M20 2H4c-1 0-2 1-2 2v3.01c0 .72.43 1.34 1 1.69V20c0 1.1 1.1 2 2 2h14c.9 0 2-.9 2-2V8.7c.57-.35 1-.97 1-1.69V4c0-1-1-2-2-2zm-5 12H9v-2h6v2zm5-7H4V4h16v3z"/></svg>
+                            <span>Produk</span></a></li>
+                        <li><a href="{{ route('stock-movements.index') }}" class="menu-item group {{ request()->routeIs('stock-movements.*') ? 'menu-item-active' : 'menu-item-inactive' }}">
+                            <svg class="{{ request()->routeIs('stock-movements.*') ? 'fill-brand-500' : 'fill-gray-500' }}" width="20" height="20" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                            <span>Stok</span></a></li>
+                        <li><a href="{{ route('transactions.index') }}" class="menu-item group {{ request()->routeIs('transactions.*') ? 'menu-item-active' : 'menu-item-inactive' }}">
+                            <svg class="{{ request()->routeIs('transactions.*') ? 'fill-brand-500' : 'fill-gray-500' }}" width="20" height="20" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                            <span>Transaksi</span></a></li>
+                    </ul>
+                    <h3 class="mb-4 text-xs uppercase leading-5 text-gray-400">Laporan</h3>
+                    <ul class="mb-6 flex flex-col gap-2">
+                        <li><a href="{{ route('reports.daily') }}" class="menu-item group {{ request()->routeIs('reports.daily') ? 'menu-item-active' : 'menu-item-inactive' }}">
+                            <svg class="{{ request()->routeIs('reports.daily') ? 'fill-brand-500' : 'fill-gray-500' }}" width="20" height="20" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+                            <span>Laporan Harian</span></a></li>
+                        <li><a href="{{ route('reports.monthly') }}" class="menu-item group {{ request()->routeIs('reports.monthly') ? 'menu-item-active' : 'menu-item-inactive' }}">
+                            <svg class="{{ request()->routeIs('reports.monthly') ? 'fill-brand-500' : 'fill-gray-500' }}" width="20" height="20" viewBox="0 0 24 24"><path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z"/></svg>
+                            <span>Laporan Bulanan</span></a></li>
+                    </ul>
+                    @if(auth()->user()->isAdmin())
+                    <h3 class="mb-4 text-xs uppercase leading-5 text-gray-400">Admin</h3>
+                    <ul class="mb-6 flex flex-col gap-2">
+                        <li><a href="{{ route('users.index') }}" class="menu-item group {{ request()->routeIs('users.*') ? 'menu-item-active' : 'menu-item-inactive' }}">
+                            <svg class="{{ request()->routeIs('users.*') ? 'fill-brand-500' : 'fill-gray-500' }}" width="20" height="20" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                            <span>Manajemen User</span></a></li>
+                    </ul>
+                    @endif
+                </div>
+            </nav>
+        </div>
     </aside>
-    @endauth
 
-    <!-- Main Content -->
-    <div class="main-content" @guest style="margin-left: 0;" @endguest>
-        <!-- Topbar -->
-        @auth
-        <header class="topbar">
-            <div class="d-flex align-items-center gap-3">
-                <button class="sidebar-toggle" onclick="document.getElementById('sidebar').classList.toggle('show')">
-                    <i class="bi bi-list"></i>
-                </button>
-                <span class="page-title">@yield('page-title', 'Dashboard')</span>
-            </div>
-            <div class="d-flex align-items-center gap-3">
-                <span class="text-muted small d-none d-md-inline">{{ now()->translatedFormat('l, d F Y') }}</span>
-                <div class="dropdown">
-                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=6C5CE7&color=fff" alt="User" width="32" height="32" class="rounded-circle me-2 border border-2 border-primary-subtle">
-                        <div class="d-none d-lg-block">
-                            <div class="fw-bold text-dark lh-1 small">{{ auth()->user()->name }}</div>
-                            <small class="text-muted" style="font-size: 10px;">{{ strtoupper(auth()->user()->role) }}</small>
-                        </div>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2 p-2" aria-labelledby="dropdownUser">
-                        <li><a class="dropdown-item rounded-2 py-2" href="#"><i class="bi bi-person me-2"></i>Profil Saya</a></li>
-                        <li><a class="dropdown-item rounded-2 py-2" href="#"><i class="bi bi-gear me-2"></i>Pengaturan</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
+    {{-- Content Area --}}
+    <div class="relative flex flex-col flex-1 overflow-x-hidden overflow-y-auto">
+        {{-- Overlay --}}
+        <div x-show="sidebarToggle" @click="sidebarToggle = false" class="fixed inset-0 z-9998 bg-gray-900/50 lg:hidden"></div>
+
+        {{-- Header --}}
+        <header class="sticky top-0 z-99999 flex w-full border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+            <div class="flex grow items-center justify-between px-4 py-3 lg:px-6 lg:py-4">
+                <div class="flex items-center gap-4">
+                    <button class="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 text-gray-500 lg:hidden dark:border-gray-800 dark:text-gray-400" @click.stop="sidebarToggle = !sidebarToggle">
+                        <svg class="fill-current" width="20" height="20" viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+                    </button>
+                    <h1 class="text-lg font-semibold text-gray-800 dark:text-white/90">@yield('page-title', 'Dashboard')</h1>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="hidden text-theme-sm text-gray-500 md:block dark:text-gray-400">{{ now()->translatedFormat('l, d F Y') }}</span>
+                    {{-- Dark Mode --}}
+                    <button class="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 text-gray-500 hover:bg-gray-100 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-gray-800" @click.prevent="darkMode = !darkMode">
+                        <svg class="hidden dark:block fill-current" width="18" height="18" viewBox="0 0 24 24"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1z"/></svg>
+                        <svg class="dark:hidden fill-current" width="18" height="18" viewBox="0 0 24 24"><path d="M9.37 5.51A7.35 7.35 0 009.1 7.5c0 4.08 3.32 7.4 7.4 7.4.68 0 1.35-.09 1.99-.27A7.014 7.014 0 0112 19c-3.86 0-7-3.14-7-7 0-2.93 1.81-5.45 4.37-6.49z"/></svg>
+                    </button>
+                    {{-- User Dropdown --}}
+                    <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+                        <button @click="open = !open" class="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                            <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=465fff&color=fff&size=40" alt="User" class="h-10 w-10 rounded-full">
+                            <span class="hidden text-theme-sm font-medium lg:block">{{ auth()->user()->name }}</span>
+                            <svg :class="open && 'rotate-180'" class="h-4 w-4 transition-transform" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>
+                        </button>
+                        <div x-show="open" x-transition class="shadow-theme-lg absolute right-0 mt-3 w-56 rounded-xl border border-gray-200 bg-white p-2 dark:border-gray-800 dark:bg-gray-900">
+                            <div class="px-3 py-2 border-b border-gray-100 dark:border-gray-800 mb-1">
+                                <p class="text-sm font-medium text-gray-800 dark:text-white">{{ auth()->user()->name }}</p>
+                                <p class="text-xs text-gray-500">{{ strtoupper(auth()->user()->role) }}</p>
+                            </div>
                             <form action="{{ route('logout') }}" method="POST">
                                 @csrf
-                                <button type="submit" class="dropdown-item rounded-2 py-2 text-danger"><i class="bi bi-box-arrow-right me-2"></i>Keluar</button>
+                                <button type="submit" class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-error-500 hover:bg-error-50 dark:hover:bg-error-500/10">
+                                    <svg class="fill-current" width="18" height="18" viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+                                    Keluar
+                                </button>
                             </form>
-                        </li>
-                    </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </header>
-        @endauth
 
-        <!-- Content -->
-        <main class="content-area">
-            {{-- Flash Messages --}}
+        {{-- Main Content --}}
+        <main class="p-4 md:p-6 max-w-(--breakpoint-2xl) mx-auto w-full">
             @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
+            <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)" class="mb-4 flex items-center gap-3 rounded-lg border border-success-200 bg-success-50 p-4 text-sm text-success-700 dark:border-success-500/30 dark:bg-success-500/10 dark:text-success-400">
+                <svg class="h-5 w-5 shrink-0 fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                <span>{{ session('success') }}</span>
+                <button @click="show = false" class="ml-auto text-success-500 hover:text-success-700">&times;</button>
+            </div>
             @endif
-
             @if(session('error'))
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ session('error') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
+            <div x-data="{ show: true }" x-show="show" class="mb-4 flex items-center gap-3 rounded-lg border border-error-200 bg-error-50 p-4 text-sm text-error-700 dark:border-error-500/30 dark:bg-error-500/10 dark:text-error-400">
+                <svg class="h-5 w-5 shrink-0 fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                <span>{{ session('error') }}</span>
+                <button @click="show = false" class="ml-auto text-error-500 hover:text-error-700">&times;</button>
+            </div>
             @endif
-
             @yield('content')
         </main>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    @stack('scripts')
+</div>
+@else
+    @yield('content')
+@endauth
+@stack('scripts')
 </body>
 </html>

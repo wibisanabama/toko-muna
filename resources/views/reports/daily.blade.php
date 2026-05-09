@@ -1,98 +1,63 @@
 @extends('layouts.app')
-
 @section('title', 'Laporan Harian')
 @section('page-title', 'Laporan Penjualan Harian')
-
 @section('content')
-<div class="card mb-4 border-0 shadow-sm">
-    <div class="card-body">
-        <form action="{{ route('reports.daily') }}" method="GET" class="row g-3 align-items-end">
-            <div class="col-md-4">
-                <label for="date" class="form-label fw-bold">Pilih Tanggal</label>
-                <input type="date" class="form-control" name="date" id="date" value="{{ $date }}">
-            </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-primary w-100">
-                    <i class="bi bi-search me-1"></i>Tampilkan
-                </button>
-            </div>
-            <div class="col-md-6 text-md-end">
-                <button type="button" class="btn btn-outline-secondary" onclick="window.print()">
-                    <i class="bi bi-printer me-1"></i>Cetak Laporan
-                </button>
-            </div>
-        </form>
+{{-- Filter --}}
+<div class="mb-4 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+    <form action="{{ route('reports.daily') }}" method="GET" class="flex flex-wrap items-end gap-3">
+        <div>
+            <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-400">Tanggal</label>
+            <input type="date" name="date" value="{{ $date }}" class="h-11 rounded-lg border border-gray-300 bg-transparent px-4 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white/90">
+        </div>
+        <button type="submit" class="h-11 rounded-lg bg-brand-500 px-6 text-sm font-medium text-white hover:bg-brand-600">Tampilkan</button>
+        <button type="button" onclick="window.print()" class="no-print h-11 rounded-lg border border-gray-300 px-5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300">🖨️ Cetak</button>
+    </form>
+</div>
+
+{{-- Summary --}}
+<div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-6">
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+        <p class="text-theme-sm text-gray-500">Total Pendapatan</p>
+        <h3 class="text-xl font-bold text-brand-500">Rp {{ number_format($summary['total_revenue'], 0, ',', '.') }}</h3>
+    </div>
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+        <p class="text-theme-sm text-gray-500">Total Transaksi</p>
+        <h3 class="text-xl font-bold text-gray-800 dark:text-white/90">{{ $summary['total_transactions'] }}</h3>
+    </div>
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+        <p class="text-theme-sm text-gray-500">Rata-rata</p>
+        <h3 class="text-xl font-bold text-gray-800 dark:text-white/90">Rp {{ number_format($summary['average_transaction'], 0, ',', '.') }}</h3>
     </div>
 </div>
 
-<div class="row mb-4">
-    <div class="col-md-4">
-        <div class="card bg-primary text-white border-0 shadow-sm">
-            <div class="card-body">
-                <h6 class="card-title text-white-50 small mb-1">Total Pendapatan</h6>
-                <h3 class="fw-bold mb-0">Rp {{ number_format($summary['total_revenue'], 0, ',', '.') }}</h3>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card bg-success text-white border-0 shadow-sm">
-            <div class="card-body">
-                <h6 class="card-title text-white-50 small mb-1">Total Transaksi</h6>
-                <h3 class="fw-bold mb-0">{{ $summary['total_transactions'] }}</h3>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card bg-info text-white border-0 shadow-sm">
-            <div class="card-body">
-                <h6 class="card-title text-white-50 small mb-1">Rata-rata Penjualan</h6>
-                <h3 class="fw-bold mb-0">Rp {{ number_format($summary['average_transaction'], 0, ',', '.') }}</h3>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="card border-0 shadow-sm">
-    <div class="card-header bg-white">
-        <h5 class="mb-0 fw-bold"><i class="bi bi-list-task me-2 text-primary"></i>Detail Transaksi - {{ \Carbon\Carbon::parse($date)->translatedFormat('d F Y') }}</h5>
-    </div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th>#</th>
-                        <th>Waktu</th>
-                        <th>Kasir</th>
-                        <th>Item</th>
-                        <th>Total</th>
-                        <th>Metode</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($transactions as $index => $transaction)
-                    <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td class="small">{{ $transaction->created_at->format('H:i:s') }}</td>
-                        <td>{{ $transaction->user->name }}</td>
-                        <td>
-                            <ul class="list-unstyled mb-0 small">
-                                @foreach($transaction->items as $item)
-                                    <li>{{ $item->product->name }} (x{{ $item->quantity }})</li>
-                                @endforeach
-                            </ul>
-                        </td>
-                        <td class="fw-bold text-primary">Rp {{ number_format($transaction->total, 0, ',', '.') }}</td>
-                        <td><span class="badge bg-light text-dark border">{{ strtoupper($transaction->payment_method) }}</span></td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="6" class="text-center py-5 text-muted">Tidak ada transaksi pada tanggal ini.</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+{{-- Table --}}
+<div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+    <div class="border-b border-gray-200 px-6 py-4 dark:border-gray-800"><h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Detail - {{ \Carbon\Carbon::parse($date)->translatedFormat('d F Y') }}</h3></div>
+    <div class="overflow-x-auto">
+        <table class="w-full"><thead><tr class="border-b border-gray-100 dark:border-gray-800">
+            <th class="px-4 py-3 text-left text-theme-xs font-medium uppercase text-gray-500">#</th>
+            <th class="px-4 py-3 text-left text-theme-xs font-medium uppercase text-gray-500">Waktu</th>
+            <th class="px-4 py-3 text-left text-theme-xs font-medium uppercase text-gray-500">Kasir</th>
+            <th class="px-4 py-3 text-left text-theme-xs font-medium uppercase text-gray-500">Item</th>
+            <th class="px-4 py-3 text-left text-theme-xs font-medium uppercase text-gray-500">Total</th>
+            <th class="px-4 py-3 text-left text-theme-xs font-medium uppercase text-gray-500">Metode</th>
+        </tr></thead>
+        <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+            @forelse($transactions as $i => $t)
+            <tr class="hover:bg-gray-50 dark:hover:bg-white/[0.02]">
+                <td class="px-4 py-3 text-sm text-gray-500">{{ $i + 1 }}</td>
+                <td class="px-4 py-3 text-sm text-gray-500">{{ $t->created_at->format('H:i:s') }}</td>
+                <td class="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{{ $t->user->name }}</td>
+                <td class="px-4 py-3">
+                    @foreach($t->items as $item)<p class="text-theme-xs text-gray-600 dark:text-gray-400">{{ $item->product->name }} (x{{ $item->quantity }})</p>@endforeach
+                </td>
+                <td class="px-4 py-3 text-sm font-bold text-brand-500">Rp {{ number_format($t->total, 0, ',', '.') }}</td>
+                <td class="px-4 py-3"><span class="rounded-full bg-gray-100 px-2.5 py-1 text-theme-xs font-medium text-gray-700 dark:bg-gray-800 dark:text-gray-300">{{ strtoupper($t->payment_method) }}</span></td>
+            </tr>
+            @empty
+            <tr><td colspan="6" class="px-4 py-8 text-center text-sm text-gray-500">Tidak ada transaksi.</td></tr>
+            @endforelse
+        </tbody></table>
     </div>
 </div>
 @endsection
