@@ -242,6 +242,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('stock-movements.*') ? 'active' : '' }}" href="{{ route('stock-movements.index') }}">
+                        <i class="bi bi-arrow-left-right"></i> Stok
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('cashier.*') ? 'active' : '' }}" href="#">
                         <i class="bi bi-calculator-fill"></i> Kasir
                     </a>
