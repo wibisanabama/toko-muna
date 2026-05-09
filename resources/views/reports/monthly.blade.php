@@ -99,7 +99,7 @@
 
 <div class="card border-0 shadow-sm">
     <div class="card-header bg-white">
-        <h5 class="mb-0 fw-bold"><i class="bi bi-list-task me-2 text-primary"></i>Ringkasan Harian - {{ \Carbon\Carbon::create()->month($month)->translatedFormat('F') }} {{ $year }}</h5>
+        <h5 class="mb-0 fw-bold"><i class="bi bi-list-task me-2 text-primary"></i>Ringkasan Harian - {{ \Carbon\Carbon::create()->month((int)$month)->translatedFormat('F') }} {{ $year }}</h5>
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
@@ -123,7 +123,7 @@
                                 $totalTrans += $transactions->filter(fn($t) => $t->created_at->format('d') == $data['day'])->count();
                             @endphp
                             <tr>
-                                <td class="ps-4">{{ $data['day'] }} {{ \Carbon\Carbon::create()->month($month)->translatedFormat('F') }}</td>
+                                <td class="ps-4">{{ $data['day'] }} {{ \Carbon\Carbon::create()->month((int)$month)->translatedFormat('F') }}</td>
                                 <td>{{ $transactions->filter(fn($t) => $t->created_at->format('d') == $data['day'])->count() }}</td>
                                 <td class="text-end pe-4 fw-bold">Rp {{ number_format($data['revenue'], 0, ',', '.') }}</td>
                             </tr>
