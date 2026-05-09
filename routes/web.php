@@ -23,4 +23,7 @@ Route::middleware('auth')->group(function () {
     
     // Kategori Produk
     Route::resource('categories', CategoryController::class)->except(['show']);
+
+    // User Management (Admin Only)
+    Route::resource('users', \App\Http\Controllers\UserController::class)->except(['show'])->middleware('role:admin');
 });
