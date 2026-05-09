@@ -257,8 +257,13 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('reports.*') ? 'active' : '' }}" href="#">
-                        <i class="bi bi-bar-chart-line-fill"></i> Laporan
+                    <a class="nav-link {{ request()->routeIs('reports.daily') ? 'active' : '' }}" href="{{ route('reports.daily') }}">
+                        <i class="bi bi-calendar2-check"></i> Laporan Harian
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('reports.monthly') ? 'active' : '' }}" href="{{ route('reports.monthly') }}">
+                        <i class="bi bi-bar-chart-line-fill"></i> Laporan Bulanan
                     </a>
                 </li>
                 @if(auth()->user()->isAdmin())
