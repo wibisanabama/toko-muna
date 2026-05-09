@@ -150,6 +150,56 @@
                 </button>
             </div>
         </div>
+    <!-- Checkout Modal -->
+    <div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true" x-ref="checkoutModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="checkoutModalLabel">Proses Pembayaran</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="text-center mb-4">
+                        <p class="text-muted mb-1">Total Tagihan</p>
+                        <h2 class="text-primary fw-bold mb-0" x-text="'Rp ' + formatRupiah(totalPrice())">Rp 0</h2>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Metode Pembayaran</label>
+                        <select class="form-select" x-model="paymentMethod" @change="if(paymentMethod !== 'cash') paidAmount = totalPrice()">
+                            <option value="cash">Tunai (Cash)</option>
+                            <option value="transfer">Transfer Bank / QRIS</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3" x-show="paymentMethod === 'cash'">
+                        <label class="form-label fw-bold">Nominal Uang (Rp)</label>
+                        <input type="number" class="form-control form-control-lg" x-model.number="paidAmount" min="0" placeholder="0">
+                        <div class="mt-2 d-flex gap-2 flex-wrap">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" @click="paidAmount = totalPrice()">Uang Pas</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" @click="paidAmount = 50000">50.000</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" @click="paidAmount = 100000">100.000</button>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-light rounded" x-show="paymentMethod === 'cash'">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted fw-bold">Kembalian</span>
+                            <h4 class="mb-0 fw-bold" :class="changeAmount() < 0 ? 'text-danger' : 'text-success'" x-text="'Rp ' + formatRupiah(changeAmount())">Rp 0</h4>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-danger mt-3" x-show="errorMsg" x-text="errorMsg"></div>
+                </div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-success px-4" @click="processPayment()" :disabled="isProcessing || (paymentMethod === 'cash' && changeAmount() < 0)">
+                        <span x-show="!isProcessing"><i class="bi bi-check-circle me-2"></i>Selesaikan Pembayaran</span>
+                        <span x-show="isProcessing"><span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Memproses...</span>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 @endsection
@@ -159,6 +209,11 @@
     document.addEventListener('alpine:init', () => {
         Alpine.data('posApp', () => ({
             cart: [],
+            paymentMethod: 'cash',
+            paidAmount: 0,
+            modalInstance: null,
+            isProcessing: false,
+            errorMsg: '',
             
             init() {
                 const savedCart = localStorage.getItem('pos_cart');
@@ -246,8 +301,48 @@
                 return new Intl.NumberFormat('id-ID').format(amount);
             },
             
+            changeAmount() {
+                return this.paidAmount - this.totalPrice();
+            },
+            
             checkout() {
-                alert('Fitur Pembayaran akan diimplementasikan pada Todo #8.');
+                this.errorMsg = '';
+                this.paymentMethod = 'cash';
+                this.paidAmount = 0;
+                
+                if (!this.modalInstance) {
+                    this.modalInstance = new bootstrap.Modal(this.$refs.checkoutModal);
+                }
+                this.modalInstance.show();
+            },
+
+            async processPayment() {
+                if (this.paymentMethod === 'cash' && this.changeAmount() < 0) {
+                    this.errorMsg = 'Nominal pembayaran kurang dari total tagihan!';
+                    return;
+                }
+
+                this.isProcessing = true;
+                this.errorMsg = '';
+
+                try {
+                    const response = await axios.post('/pos/checkout', {
+                        items: this.cart,
+                        payment_method: this.paymentMethod,
+                        paid: this.paymentMethod === 'cash' ? this.paidAmount : this.totalPrice(),
+                    });
+
+                    if (response.data.success) {
+                        this.cart = []; // clear cart
+                        this.modalInstance.hide();
+                        alert(`Transaksi Berhasil!\nKembalian: Rp ${this.formatRupiah(response.data.change)}`);
+                        window.location.reload(); // Reload to refresh stock UI
+                    }
+                } catch (error) {
+                    this.errorMsg = error.response?.data?.message || 'Terjadi kesalahan sistem.';
+                } finally {
+                    this.isProcessing = false;
+                }
             }
         }));
     });
