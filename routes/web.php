@@ -35,4 +35,8 @@ Route::middleware('auth')->group(function () {
 
     // User Management (Admin Only)
     Route::resource('users', \App\Http\Controllers\UserController::class)->except(['show'])->middleware('role:admin');
+    
+    // POS (Kasir)
+    Route::get('/pos', [\App\Http\Controllers\PosController::class, 'index'])->name('pos.index');
+    Route::post('/pos/checkout', [\App\Http\Controllers\PosController::class, 'checkout'])->name('pos.checkout');
 });

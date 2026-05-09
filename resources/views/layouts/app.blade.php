@@ -247,7 +247,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('cashier.*') ? 'active' : '' }}" href="#">
+                    <a class="nav-link {{ request()->routeIs('pos.*') ? 'active' : '' }}" href="{{ route('pos.index') }}">
                         <i class="bi bi-calculator-fill"></i> Kasir
                     </a>
                 </li>
