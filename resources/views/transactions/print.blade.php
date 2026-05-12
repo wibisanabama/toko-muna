@@ -132,7 +132,7 @@
  <div class="receipt">
  <div class="header">
  <h2>{{ config('app.name', 'Toko Muna') }}</h2>
- <p>Jl. Contoh Alamat No. 123</p>
+ <p>Jl. Prof. Moch Yamin No.70, Sayang, Kec. Cianjur, Kabupaten Cianjur, Jawa Barat 43213</p>
  <p>Telp: 0812-3456-7890</p>
  </div>
 
