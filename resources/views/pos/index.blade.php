@@ -127,7 +127,22 @@
                             </div>
                         </div>
                     </div>
- </div>
+                </div>
+
+                <!-- QRIS Barcode -->
+                <div class="mb-4 text-center" x-show="paymentMethod === 'transfer'" x-transition>
+                    <div class="inline-block p-4 bg-white border border-gray-200 rounded-xl shadow-sm">
+                        <p class="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wider">Scan QRIS untuk Pembayaran</p>
+                        <img src="{{ asset('img/qris_v2.jpg') }}" alt="QRIS Toko Muna" class="mx-auto w-64 h-auto rounded-lg">
+                        <div class="mt-2 flex items-center justify-center gap-2">
+                            <span class="px-2 py-0.5 text-[10px] font-bold bg-blue-50 text-blue-600 rounded uppercase">GOPAY</span>
+                            <span class="px-2 py-0.5 text-[10px] font-bold bg-red-50 text-red-600 rounded uppercase">OVO</span>
+                            <span class="px-2 py-0.5 text-[10px] font-bold bg-orange-50 text-orange-600 rounded uppercase">SHOPEEPAY</span>
+                            <span class="px-2 py-0.5 text-[10px] font-bold bg-green-50 text-green-600 rounded uppercase">DANA</span>
+                        </div>
+                    </div>
+                </div>
+
  <div class="mb-4" x-show="paymentMethod === 'cash'">
  <label class="mb-1.5 block text-sm font-medium text-gray-700 ">Nominal (Rp)</label>
  <input type="number" x-model.number="paidAmount" min="0" class=" h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 ">
